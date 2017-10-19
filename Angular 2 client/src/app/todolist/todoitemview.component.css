@@ -1,0 +1,11 @@
+.modal-footer button {
+    width: 85px;
+}
+
+.modal-header {
+    height: 50px;
+}
+
+.hoverPointer {
+    cursor: pointer;
+}

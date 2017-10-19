@@ -1,0 +1,35 @@
+<div *ngIf="todoitem">
+    <div class="modal-content" style="width: 300px">
+        <div class="modal-header">
+            <input [(ngModel)]="newItem" style="float:left" (keyup)="validateInput()">
+            <div class="glyphicon glyphicon-pencil" style="float:right"></div>
+        </div>
+
+
+        <div class="modal-body">
+
+            <div class="row">
+                <div *ngIf="todoitem.done" class="col-md-10">This task has been completed.</div>
+                <div *ngIf="!todoitem.done" class="col-md-10">
+                    This task has <span style="font-weight: bold">not</span> been completed.
+                </div>
+                <div class="glyphicon glyphicon-check col-md-2 hoverPointer" *ngIf="todoitem.done"
+                     (click)="todoitem.done = !todoitem.done"></div>
+                <div class="glyphicon glyphicon-unchecked col-md-2 hoverPointer" *ngIf="!todoitem.done"
+                     (click)="todoitem.done = !todoitem.done"></div>
+            </div>
+
+            <div class="" style="height:37px">
+                <div class="col-md-9"></div>
+                <button type="button" class="btn btn-basic col-md-3" *ngIf="todoitem.done" (click)="todoitem.done = false" style="float:right">Todo
+                </button>
+                <button type="button" class="btn btn-basic col-md-3" *ngIf="!todoitem.done" (click)="todoitem.done = true" style="float:right">Done
+                </button>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-success" (click)="close()" style="float:left">Update</button>
+            <button type="button" class="btn btn-danger" (click)="delete(index)" style="float:right">Delete</button>
+        </div>
+    </div>
+</div>

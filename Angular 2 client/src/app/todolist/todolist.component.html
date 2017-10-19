@@ -1,0 +1,190 @@
+<table style="margin-top:25px; margin-left: 50px;">
+    <tr>
+        <td>
+            <h1 style="text-align:center">Robur's Todo list</h1>
+        </td>
+    </tr>
+    <tr>
+        <td style="vertical-align: top">
+            <!-- Header -->
+            <div>
+                <div class="row grayborder" style="width: 95%; margin: 0px; background: #e6e6e6">
+
+                    <!-- Empty -->
+                    <div class="col-md-1"></div>
+
+                    <!-- Info -->
+                    <div class="col-md-2 itemCenterHorizontal itemCenterVertical">
+                        <div class="glyphicon glyphicon-info-sign hoverPointer" style="color: #0000ff"
+                             (click)="showInfo=!showInfo"></div>
+                    </div>
+
+                    <!-- Input -->
+                    <div class="col-md-7">
+                        <input placeholder="Type here..." type="text" [(ngModel)]="newItem" class="newItemInput"
+                               (keyup.enter)="addNewItem()">
+                    </div>
+
+                    <!-- Add -->
+                    <div class="col-md-2">
+                        <div class="donebutton hoverPointer itemCenterVertical" (click)="addNewItem()">+</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div (mouseleave)="removeHoverItem()" class="scrollbox"
+                 [dragula]="'bag'" [dragulaModel]="todolist"> <!-- Dragula bag to drag items around -->
+                <div *ngFor="let todoitem of todolist; let idx = index" class="row whiteborder"
+                     style="width: 95%; margin: 0px" (mouseenter)="hoverItem(todoitem, idx)"
+                     [class.selected]="idx == selectedItem?.index"
+                     [class.hovered]="idx == hoveredItem?.index">
+
+                    <!-- Drag handle -->
+                    <div class="col-md-1 itemCenterVertical">
+                        <div *ngIf="idx === hoveredItem?.index" class="glyphicon glyphicon-move dragHandle hoverPointer"
+                             style="font-size:13; margin-left: 10px"></div>
+                    </div>
+
+                    <!-- Vinkje -->
+                    <div class="col-md-2 itemCenterHorizontal">
+                        <div *ngIf="todoitem.done" class="glyphicon glyphicon-ok itemCenterVertical hoverPointer"
+                             (click)="todoitem.done = false"></div>
+                        <div *ngIf="!todoitem.done && hoveredItem?.item === todoitem"
+                             class="glyphicon glyphicon-ok itemCenterVertical hoverPointer"
+                             style="color:darkgray"
+                             (click)="todoitem.done = true"></div>
+                    </div>
+
+                    <!-- Text -->
+                    <div class="col-md-7 itemCenterVertical hoverDefault" [class.done]="todoitem.done" style="height: 100%"
+                         (click)="clickItem(todoitem, idx)">
+                        {{todoitem.item}}
+                    </div>
+
+                    <!-- Delete -->
+                    <div class="col-md-2">
+                        <span class="donebutton hoverPointer itemCenterVertical" (click)="remove(idx)">&times;</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div>
+                <div style="height:34px; padding-right:20px">
+                    <div style="float:left" (click)="defaultTodolist()"
+                         class="btn btn-default resetDefault" title="Klik hier voor voorbeeld data">
+                        <div class="glyphicon glyphicon-home"></div>
+                        Example
+                    </div>
+                    <div style="float:right">
+                        <div (click)="load()"
+                             class="btn btn-default resetDefault">
+                            <div class="glyphicon glyphicon-download" style=""></div>
+                            Load
+                        </div>
+                        <div class="btn btn-default" (click)="post()">
+                            <div class="glyphicon glyphicon-floppy-{{postSuccessful?'saved':'disk'}}"></div>
+                            Save
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
+        <td style="vertical-align: top">
+
+            <!-- Item details -->
+            <div style="height: 190px;margin-left: 80px">
+                <!-- Selected item goes first -->
+                <div *ngIf="selectedItem">
+                    <todoitemview [todoitem]="selectedItem.item"
+                                  (output)="handleChange($event)"></todoitemview>
+                </div>
+                <!-- Hovered item goes last -->
+                <div *ngIf="!selectedItem && hoveredItem">
+                    <todoitemview [todoitem]="hoveredItem.item"
+                                  [index]="hoveredItem.index"
+                                  (output)="handleChange($event)"></todoitemview>
+                </div>
+            </div>
+
+            <!-- Info -->
+            <div style="padding-left: 80px; padding-top: 40px">
+                <div *ngIf="showInfo">
+                    <div class="modal-content" style="width: 300px">
+                        <div class="modal-header">
+                            Features
+                        </div>
+                        <div class="modal-body">
+                            <table class="infotable">
+                                <tr>
+                                    <td>Afvinken</td>
+                                    <td>
+                                        <div class="glyphicon glyphicon-ok"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Bewerken</td>
+                                    <td>
+                                        <div class="glyphicon glyphicon-pencil"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Verwijderen</td>
+                                    <td>
+                                        <div style="font-size: 25px; height: 20px; margin-top:-13px">&times;</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Toevoegen</td>
+                                    <td>
+                                        <div style="font-size: 25px; height: 20px; margin-top:-13px">+</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Verslepen</td>
+                                    <td>
+                                        <div class="glyphicon glyphicon-move"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Detail bekijken</td>
+                                    <td>
+                                        <div style="border: 3px solid #bfbfbf; background: #e6e6e6; height: 15px"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Ophalen</td>
+                                    <td>
+                                        <div class="glyphicon glyphicon-download"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Opslaan</td>
+                                    <td>
+                                        <div class="glyphicon glyphicon-floppy-disk"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Opslaan successvol</td>
+                                    <td>
+                                        <div class="glyphicon glyphicon-floppy-saved"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Voorbeeld todolist</td>
+                                    <td>
+                                        <div class="glyphicon glyphicon-home"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+<div [class.loader]="loading > 0"></div>
